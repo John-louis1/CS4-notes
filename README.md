@@ -362,7 +362,13 @@ public void methodCaller(){
 }
 
 ```
+Exceptions can only be thrown from methods or constructors.
+
 Class Cast Exceptions are thrown when you try to cast a parent into it's child. (thrown in run time)
+
+
+**Note:** Unchecked exceptions such as ArithmeticException , nullpointerException and RuntimeException needn't be declared in method signature. 
+
 ## Abstraction 
 
 The abstract methods in any abstract class must be defined once the subclass is not Abstract. Meaning that if an abstract class extends another abstract one you cannot have a body for the method in either class :) 
@@ -434,11 +440,157 @@ Note that you can use the default access modifier with the class in our case 1.
 2. private: Members available only in the class
 3. default: Members available in the same class,package only.
 4. protected: Members available in the same class,package and another package but a subclass of this class. 
-**Note**: default is more protected than the protected access modifier :O 
+**Note** : default is more protected than the protected access modifier :O 
 
 
 ## Overriding vs Overloading
 Overriding is to override the logic of a function in the parent class. The overriding function must have the exact same signature (return type, parameters and name).
 However, overloading is the idea of adding methods with the same name but different signature. The old function can still be called normally.
+
+**Note:** you cannot write the same method signature (same name, and same parameters in same locations) twice with a different return type.
+
+```java
+class A {
+    protected void method()
+    {
+        System.out.println("AHello");
+    }
+
+
+public static class B extends A {
+
+     public void method()
+    {
+        System.out.println("BHello");
+    }
+
+
+    public static void main(String args[])
+    {
+        A b = new B();
+        b.method();
+    }
+}
+```
+**Output:** BHello
+
+
+```java 
+class A {
+    private void method()
+    {
+        System.out.println("AHello");
+    }
+
+
+public static class B extends A {
+
+     public void method()
+    {
+        System.out.println("BHello");
+    }
+
+
+    public static void main(String args[])
+    {
+        A b = new B();
+        b.method();
+    }
+}
+
+```
+**Output:** AHello
+
+**Note**: At runtime it prints the output of the method from the **subclass** if the access modifier of the super class was **public,protected or default** , **if** it was **private** it prints the output of the method from the **super class**
+
+## Throwing Exceptions in overriding methods
+
+An overriding method can throw any unchecked exceptions, regardless of whether the overridden method throws exceptions or not. However, the overriding method should not throw checked exceptions that are new or broader than the ones declared by the overridden method. The overriding method can throw narrower (Subclass of the thrown exceptions) or fewer exceptions than the overridden method.
+
+
+```java
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.util.Scanner;
+    abstract class Super {
+        public String readFile(String path) throws IOException {
+            throw new IOException();
+        }
+
+    static class ExceptionsExample extends Super {
+        @Override
+        public String readFile(String path) throws FileNotFoundException {
+            Scanner sc = new Scanner(new File("E://test//sample.txt"));
+            String input;
+            StringBuffer sb = new StringBuffer();
+            while (sc.hasNextLine()) {
+                input = sc.nextLine();
+                sb.append(" "+input);
+            }
+            return sb.toString();
+        }
+
+    }
+        public static void main(String args[]) {
+            String path = "E://test//sample.txt";
+            ExceptionsExample obj = new ExceptionsExample();
+            try {
+                System.out.println(obj.readFile(path));
+            }catch(FileNotFoundException e) {
+                System.out.println("Make sure the specified file exists");
+            }
+        }
+
+  }
+    
+ 
+ ```
+   **OUTPUT:** Make sure the specified file exists
+  
+   
+
+    
+
+```java
+   
+   import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.util.Scanner;
+    abstract class Super {
+        public String readFile(String path) throws IOException {
+            throw new IOException();
+        }
+
+    static class ExceptionsExample extends Super {
+        @Override
+        public String readFile(String path) throws Exception { //broader 
+            Scanner sc = new Scanner(new File("E://test//sample.txt"));
+            String input;
+            StringBuffer sb = new StringBuffer();
+            while (sc.hasNextLine()) {
+                input = sc.nextLine();
+                sb.append(" "+input);
+            }
+            return sb.toString();
+        }
+
+    }
+        public static void main(String args[]) {
+            String path = "E://test//sample.txt";
+            ExceptionsExample obj = new ExceptionsExample();
+            try {
+                System.out.println(obj.readFile(path));
+            }catch(FileNotFoundException e) {
+                System.out.println("Make sure the specified file exists");
+            }
+        }
+
+    } 
+  
+  ```
+  **Compile error**
+
 
 
